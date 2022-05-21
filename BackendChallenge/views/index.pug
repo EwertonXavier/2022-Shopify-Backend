@@ -1,0 +1,6 @@
+extends layout 
+
+block layout-content 
+    h1 Inventory Tracking app. 
+    form(action="/item/list" method="GET")
+        button(type="submit") List of Items

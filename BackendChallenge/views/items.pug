@@ -1,0 +1,22 @@
+extends layout 
+
+
+block layout-content 
+    h1 List Items
+    form(action="/item/add" method="GET")
+        button(type="submit") Add new Item
+    div(class="container")
+        each item in items
+            div(class="item-card")
+                h3 Name: #{item.name}
+                p Id: #{item._id}
+                p Description: #{item.description}
+                p Quantity: #{item.quantity}
+                form(action="/item/edit" method="GET")
+                    input(type="hidden", name="id", value=item._id)
+                    button(type="submit") Edit
+                form(action="/item/delete" method="POST")
+                    input(type="hidden", name="id", value=item._id)
+                    button(type="submit" class="button-delete") Delete
+            
+        

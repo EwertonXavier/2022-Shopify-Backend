@@ -1,0 +1,15 @@
+extends layout 
+
+block layout-content 
+    h1 #{title}
+    form(action="/item/add" method="post")
+        div
+            label(for="name") Name: 
+            input(type="text", id="name", name="name")
+        div
+            label(for="description") Description: 
+            input(type="text", id="description", name="desc")
+        div
+            label(for="quantity") Quantity: 
+            input(type="number", id="quantity",min=0, name="quantity")
+        button(type="submit") Add

@@ -1,0 +1,16 @@
+extends layout 
+
+block layout-content 
+    h1 #{title}
+    form(action="/item/edit" method="post")
+        input(type="hidden",name="id",value=item._id)
+        div
+            label(for="name") Name: 
+            input(type="text", id="name", name="name",value=item.name)
+        div
+            label(for="description") Description: 
+            input(type="text", id="description", name="desc", value=item.description)
+        div
+            label(for="quantity") Quantity: 
+            input(type="number", id="quantity",min=0, name="quantity", value=item.quantity)
+        button(type="submit") Update

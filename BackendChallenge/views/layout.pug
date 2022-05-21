@@ -1,0 +1,21 @@
+doctype html 
+html
+    head
+        meta(charset="utf-8")
+        //print the title variable in the <title> element
+        //results in <title>{title} | Test Website
+        title Inventory Manager | #{title}
+        link(rel="stylesheet", href="/css/styles.css")
+    body
+        header#header
+            .header-content 
+                h2#site-name
+                    a(href="/") Home
+                
+        main#main 
+            //layout-content is like a placeholder for other pug content
+            block layout-content 
+        footer#footer 
+            p &copy; Copyright HTTP5211,2022.
+
+                

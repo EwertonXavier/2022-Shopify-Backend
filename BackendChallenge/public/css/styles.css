@@ -1,0 +1,43 @@
+/*General Styles*/
+@import url("fonts.googleapis.com/css2?family=Quicksand&display=swap");
+
+html {
+  box-sizing: border-box;
+}
+*,
+*::after*::before {
+  box-sizing: inherit;
+}
+body {
+  font-family: "Quicksand", sans-serif;
+}
+/*Generic*/
+
+form button {
+  background-color: cornflowerblue;
+  border: 1 solid rgb(50, 82, 143);
+  border-radius: 5px;
+  padding: 1em;
+  margin: 0.5em;
+  font-weight: bold;
+}
+
+/*List Styles*/
+.item-card {
+  padding: 0.5em;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 0.2em;
+  flex: 1 0 25%;
+}
+
+.container {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.button-delete {
+  background-color: rgb(226, 43, 68);
+  border: 1 solid rgb(121, 42, 52);
+  color: azure;
+}
