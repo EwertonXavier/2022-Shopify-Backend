@@ -6,7 +6,7 @@ var ObjectId = require("mongodb").ObjectId; // Import object Id class
 
 const app = express(); //create an Express app and storing it in app variable
 const port = process.env.port || 8888; //set up a port number
-const mongoUrl = "mongodb://localhost:27017/TrackingInventoryDb"; //path for our mongo. Default por 27017
+const mongoUrl = "mongodb://localhost:27017/TrackingInventoryDb"; //path for our mongo. Default port 27017
 
 // Tell express how to parse form data
 app.use(express.urlencoded({ extended: true }));
@@ -18,7 +18,7 @@ app.set("view engine", "pug"); // set PUG as the engine to build HTML pages
 
 //Connecting to DB
 var db; // variable to hold db instance
-var items; //variable to hold menu links because this is data common on all pages
+var items; //variable to hold items
 
 //Conects to a mongo databse
 mongo.connect(mongoUrl, (error, client) => {
@@ -29,7 +29,7 @@ mongo.connect(mongoUrl, (error, client) => {
 //set up path for static files (e.g. CSS and client-side JS)
 app.use(express.static(path.join(__dirname, "public")));
 
-/********Routes *********/
+/******** Item Routes *********/
 
 //Reponds request to the inital route
 //returns index.pug page
@@ -90,9 +90,9 @@ app.post("/item/edit", (request, response) => {
         response.redirect("/item/list"); //redirects to /item/list
       }
     );
-  }else{
+  } else {
     response.status(400);
-    response.render("error",{error: "Bad Request(400)"})
+    response.render("error", { error: "Bad Request(400)" });
   }
 });
 
@@ -163,7 +163,13 @@ function refreshItems() {
 // Used before editing or adding item to database
 function validateItem(data) {
   //list of validations I judged would make an Item invalid
-  if (data._id && data.name && data.description && 0 <= data.quantity && data.quantity!=='') {
+  if (
+    data._id &&
+    data.name &&
+    data.description &&
+    0 <= data.quantity &&
+    data.quantity !== ""
+  ) {
     return true;
   }
   return false;
@@ -238,10 +244,43 @@ test_validateItem(
   {
     _id: "123123",
     name: "Item name",
-    quantity: '',
+    quantity: "",
     description: undefined,
   },
   false
 );
 
+//***** Shipment Routes *******/
+//list all shipments
+//API to list all shipments. Return JSON with all shipment information.
+app.get("/api/shipment/list", (req, res) => {
+  //get all shipments from database
+  db.collection("Shipments")
+    .find({})
+    .toArray((err, shipments) => {
+      if (err) {
+        res.status(500); // internal error
+        throw err;
+      }
+      res.status(200);
+      res.json(shipments); //return json with all shipmment data
+    });
+});
+
+//Route to List all shipments on a webpage
+//returns shipments.pug populated with information collected from API /api/shipment/list
+app.get("/shipment/list", (req, res) => {
+  //get all shipments from database
+  db.collection("Shipments")
+    .find({})
+    .toArray((err, shipments) => {
+      if (err) {
+        res.status(500); // internal error
+        res.render("error", { error: "Internal Server Error(500)" });
+        throw err;
+      }
+      res.status(200);
+      res.render("shipments", { shipments: shipments }); //renders shipments.pug with all shipmment data
+    });
+});
 

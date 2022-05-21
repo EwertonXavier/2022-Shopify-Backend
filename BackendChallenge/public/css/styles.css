@@ -41,3 +41,13 @@ form button {
   border: 1 solid rgb(121, 42, 52);
   color: azure;
 }
+
+/*Shipment Style*/
+
+.shipment-card{
+  padding: 0.5em;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 1em;
+  background-color: rgb(194, 228, 228);
+}

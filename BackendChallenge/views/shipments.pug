@@ -1,0 +1,16 @@
+extends layout 
+
+block layout-content 
+    h1 Shipments List
+    each shipment in shipments
+        div.shipment-card
+            h2 Shipment Id: #{shipment._id}
+            p Total Price: #{shipment.total_price}
+            p Creation Date: #{shipment.creation_date}
+            p Items:
+            div.container
+                each item in shipment.items
+                    div.item-card
+                        p Item: #{item.name}
+                        p Description: #{item.description}
+                        p Quantity: #{item.quantity}

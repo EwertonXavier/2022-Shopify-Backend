@@ -3,4 +3,6 @@ extends layout
 block layout-content 
     h1 Inventory Tracking app. 
     form(action="/item/list" method="GET")
-        button(type="submit") List of Items
+        button(type="submit") Items
+    form(action="/shipment/list" method="GET")
+        button(type="submit") Shipment

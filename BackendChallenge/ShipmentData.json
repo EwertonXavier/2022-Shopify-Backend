@@ -1,0 +1,65 @@
+[
+  {
+    "total_price": 105.15,
+    "creation_date": "2022-05-21",
+    "items": [
+      {
+        "name": "item-00 name",
+        "description": "item description 00",
+        "quantity": 3
+      },
+      {
+        "name": "item-01 name",
+        "description": "item description 01",
+        "quantity": 2
+      }
+    ]
+  },
+  {
+    "total_price": 404.75,
+    "creation_date": "2022-05-20",
+    "items": [
+      {
+        "name": "item-05 name",
+        "description": "item description 05",
+        "quantity": 1
+      },
+      {
+        "name": "item-06 name",
+        "description": "item description 06",
+        "quantity": 4
+      },
+      {
+        "name": "item-07 name",
+        "description": "item description 07",
+        "quantity": 14
+      }
+    ]
+  },
+  {
+    "total_price": 728.15,
+    "creation_date": "2022-05-19",
+    "items": [
+        {
+            "name": "item-09 name",
+            "description": "item description 09",
+            "quantity": 18
+          },
+          {
+            "name": "item-10 name",
+            "description": "item description 10",
+            "quantity": 19
+          },
+          {
+            "name": "item-11 name",
+            "description": "item description 11",
+            "quantity": 11
+          },
+          {
+            "name": "item-12 name",
+            "description": "item description 12",
+            "quantity": 54
+          }
+    ]
+  }
+]
