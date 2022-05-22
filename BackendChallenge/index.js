@@ -97,6 +97,8 @@ app.post("/item/edit", (request, response) => {
   }
 });
 
+//
+
 //responds to Get request ant /item/add
 //Returns add.pug page which is used to add items
 app.get("/item/add", (request, response) => {
@@ -290,32 +292,11 @@ app.get("/shipment/list", (req, res) => {
 //Route to get page where you can create a new Shipment.
 //Permits to select which item and quantity is going to be inserted in the shipment.
 app.get("/shipment/add", (req, res) => {
+  refreshItems();
   //get all items from the database
   res.render("newShipment", { items: items });
 });
 
-//Route to receive new shipment data and insert it into database.
-//Make use of Validate Function before inserting in database
-//
-/*shipment JSON
-{
-  "total_price": 105.15,
-  "creation_date": "2022-05-21",
-  "items": [
-    {
-      "id": ObjectId(12312312351234)
-      "name": "item-00 name",
-      "description": "item description 00",
-      "quantity": 3
-    },
-    {
-      "id": ObjectId(12312312351234)
-      "name": "item-01 name",
-      "description": "item description 01",
-      "quantity": 2
-    }
-  ]
-}*/
 //Add new shipment into the database
 //Receives data from form on newShipment.pug
 //Creates shipment document (JSON)
@@ -337,7 +318,8 @@ app.post("/shipment/add", (req, res) => {
   let date = new Date().toDateString();
   //creates shipment to be inserted on database
   let shipment = {
-    creation_date: date
+    creation_date: date,
+    total_price:req.body.price
   };
   console.log(shipmentItemsPartial);
   //creates list ob objectId in our order to be used as filter
@@ -353,21 +335,34 @@ app.post("/shipment/add", (req, res) => {
   //function to insert item description, item name and order quantity for each item in shipment
   function iterateFunc(doc) {
     //find correct shipmentItem quantity
-    let objItems = shipmentItemsPartial.map((item)=>{
+    let objItems = shipmentItemsPartial.map((item) => {
       //had problems comparing two objItems, so i converted them to string
       return item._id.toString();
-    })
+    });
     //find what quantity was requested for item identified by doc._id
-    let quantity = shipmentItemsPartial[objItems.indexOf(doc._id.toString())].quantity;
+    let quantityRequested =
+      shipmentItemsPartial[objItems.indexOf(doc._id.toString())].quantity;
+    let newAvailableQuantity = +doc.quantity - quantityRequested;
     //Creates item for shipment
-    let item = {
+    let itemForShipment = {
       _id: doc._id,
       description: doc.description,
       name: doc.name,
-      quantity: quantity,
-    }
+      quantity: quantityRequested,
+    };
+    //Creates item to update database
+    let updatedItem = {
+      _id: doc._id,
+      description: doc.description,
+      name: doc.name,
+      quantity: newAvailableQuantity,
+    };
+    
+    //updates item collection
+    db.collection("Items").findOneAndReplace({ _id: doc._id }, updatedItem);
+    refreshItems(); //updates list of items
     //insert item into shipmentItems
-    shipmentItems.push({...item});
+    shipmentItems.push({ ...itemForShipment });
     //insert shipmentItems array into shipment.items
     shipment.items = shipmentItems;
     console.log(shipment);
@@ -376,9 +371,8 @@ app.post("/shipment/add", (req, res) => {
   cursor.forEach(iterateFunc);
 
   //insert new shipment into database
-  db.collection("Shipments").insertOne(shipment,(err,result) => {
-    if(err) throw err;
+  db.collection("Shipments").insertOne(shipment, (err, result) => {
+    if (err) throw err;
     res.redirect("/shipment/list");
-  })
-
+  });
 });
