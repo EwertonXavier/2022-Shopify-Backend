@@ -44,10 +44,35 @@ form button {
 
 /*Shipment Style*/
 
-.shipment-card{
+.shipment-card {
   padding: 0.5em;
   border: 1px solid black;
   border-radius: 10px;
   margin: 1em;
   background-color: rgb(194, 228, 228);
+}
+
+/*New Shipment Style*/
+.available-table,
+.available-table th,
+.available-table td ,
+.new-shipment-table,
+.new-shipment-table th,
+.new-shipment-table td {
+  border: solid 1px black;
+  padding: 5px;
+  background-color: rgb(247, 242, 242);
+}
+
+.new-shipment-table th{
+  background-color: rgb(85, 125, 199);
+  color: white;
+}
+.available-table th{
+  background-color: rgb(61, 138, 54);
+  color: white;
+}
+
+.shipment-container , div.available-container{
+  margin: 1em;
 }

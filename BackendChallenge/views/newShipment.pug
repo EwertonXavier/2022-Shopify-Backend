@@ -1,0 +1,42 @@
+extends layout 
+
+
+block layout-content 
+    h1 New Shipment
+    div.container
+        div.available-container
+            h2 Available items
+            table.available-table
+                thead
+                    th Id 
+                    th Name 
+                    th Description 
+                    th Quantity
+                tbody 
+                    each item in items
+                        tr.new-shipment-tr
+                            td #{item._id}
+                            td #{item.name}
+                            td #{item.description}
+                            td #{item.quantity}
+        div.shipment-container
+            h2 Shipment items
+            form(action="/shipment/add" method="POST")
+                table.new-shipment-table
+                    thead
+                        th Id 
+                        th Name 
+                        th Description 
+                        th Quantity
+                    tbody 
+                        each item in items
+                            tr.new-shipment-tr
+                                td #{item._id}
+                                td #{item.name}
+                                td #{item.description}
+                                td 
+                                    input(type="number",name=item._id, min=0,max=item.quantity) 
+                button(type="submit") Create Shipment
+        
+
+        

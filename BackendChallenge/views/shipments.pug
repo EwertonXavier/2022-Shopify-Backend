@@ -1,6 +1,8 @@
 extends layout 
 
 block layout-content 
+    form(method="GET",action="/shipment/add")
+        button(type="submit") New Shipment
     h1 Shipments List
     each shipment in shipments
         div.shipment-card

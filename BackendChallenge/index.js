@@ -1,4 +1,5 @@
 //import Required Modules
+const { response } = require("express");
 const express = require("express");
 const path = require("path"); //path is a built-in Node module
 const mongo = require("mongodb").MongoClient; // import Mongo Module
@@ -159,6 +160,14 @@ function refreshItems() {
       items = res; //get all documents in items and make it in an array
     });
 }
+//function to update list of items
+function getItems() {
+  db.collection("Items") //select which collection we are going to use
+    .find({}) //select all
+    .toArray((err, res) => {
+      return(res); //get all documents in items and make it in an array
+    });
+}
 //Function to make sure Items fields are valid.
 // Used before editing or adding item to database
 function validateItem(data) {
@@ -275,12 +284,19 @@ app.get("/shipment/list", (req, res) => {
     .find({})
     .toArray((err, shipments) => {
       if (err) {
-        res.status(500); // internal error
+        res.status(500); // inform server had internal error
         res.render("error", { error: "Internal Server Error(500)" });
         throw err;
       }
-      res.status(200);
+      res.status(200); //informs it was a success
       res.render("shipments", { shipments: shipments }); //renders shipments.pug with all shipmment data
     });
 });
 
+//Route to get page where you can create a new Shipment.
+//Permits to select which item and quantity is going to be inserted in the shipment.
+app.get("/shipment/add", (req,res) => {
+  //get all items from the database
+  res.render("newShipment", {items:items});
+  
+})
