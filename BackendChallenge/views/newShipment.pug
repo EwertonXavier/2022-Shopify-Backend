@@ -35,7 +35,10 @@ block layout-content
                                 td #{item.name}
                                 td #{item.description}
                                 td 
-                                    input(type="number",name=item._id, min=0,max=item.quantity) 
+                                    input(type="number",name="quantity", min=0,max=item.quantity) 
+                                    input(type="hidden",name="id", min=0, max=item.quantity, value=item._id) 
+                label(for="price") Price: 
+                input(type="number", name="price",id="price", min=0,step=".01")
                 button(type="submit") Create Shipment
         
 

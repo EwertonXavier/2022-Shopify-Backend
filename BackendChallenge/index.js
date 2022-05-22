@@ -160,14 +160,7 @@ function refreshItems() {
       items = res; //get all documents in items and make it in an array
     });
 }
-//function to update list of items
-function getItems() {
-  db.collection("Items") //select which collection we are going to use
-    .find({}) //select all
-    .toArray((err, res) => {
-      return(res); //get all documents in items and make it in an array
-    });
-}
+
 //Function to make sure Items fields are valid.
 // Used before editing or adding item to database
 function validateItem(data) {
@@ -295,8 +288,76 @@ app.get("/shipment/list", (req, res) => {
 
 //Route to get page where you can create a new Shipment.
 //Permits to select which item and quantity is going to be inserted in the shipment.
-app.get("/shipment/add", (req,res) => {
+app.get("/shipment/add", (req, res) => {
   //get all items from the database
-  res.render("newShipment", {items:items});
+  res.render("newShipment", { items: items });
+});
+
+//Route to receive new shipment data and insert it into database.
+//Make use of Validate Function before inserting in database
+//
+/*shipment JSON
+{
+  "total_price": 105.15,
+  "creation_date": "2022-05-21",
+  "items": [
+    {
+      "id": ObjectId(12312312351234)
+      "name": "item-00 name",
+      "description": "item description 00",
+      "quantity": 3
+    },
+    {
+      "id": ObjectId(12312312351234)
+      "name": "item-01 name",
+      "description": "item description 01",
+      "quantity": 2
+    }
+  ]
+}*/
+//Add new shipment into the database
+//Receives data from form on newShipment.pug
+//Creates shipment document (JSON)
+//Insert it into DB
+app.post("/shipment/add", (req, res) => {
+  //Creates shipmentItems Json
+
+  //This object has the Object(id) and quantity of items selected for shipment
+  let shipmentItems = req.body.id //foreach req.body.ID
+    .map((id, index) => {
+      let objId = new ObjectId(id);
+      //insert into shipmentItems {_id: req.body.id, quantity: req.body.quantity}
+      return {
+        _id: objId,
+        quantity: req.body.quantity[index],
+      };
+    }) //removes from shipmentItems if quantity <= 0
+    .filter((object) => object.quantity > 0);
+    //creates Date to creationg_date field
+    let date = new Date().toDateString()
+  let shipment = {
+    "creation_date":date,
+    "items": shipmentItems
+  }
+  console.log(shipmentItems);
+  db.collection("Shipments").insertOne(shipment,(err,result) =>{
+    if(err) throw err;
+    res.redirect("/shipment/list");
+  })
   
-})
+});
+//Create Shipment JSON
+
+/* 
+console.log(req.body.id, req.body.quantity);
+  let shipment = req.body.id.map((id, index) => {
+    if (req.body.quantity[index]>=0 && req.body.quantity[index]!='') {
+      return { quantity: req.body.quantity[index], id: id };
+    }
+  });
+  for (let k = 0; k < req.body.id.length; k++) {
+    if (req.body.quantity[k] <= 0) {
+      req.body.quantity.splice(k, 1);
+      req.body.id.splice(k, 1);
+    }
+  }*/
