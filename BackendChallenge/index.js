@@ -137,6 +137,7 @@ app.post("/item/add", (request, response) => {
 app.post("/item/delete", (request, response) => {
   console.log(request.body.id);
   let id = new ObjectId(request.body.id);
+  console.log(id);
   //delete id from DB
   db.collection("Items").deleteOne({ _id: id }, (err, result) => {
     if (err) throw err;
@@ -321,43 +322,63 @@ app.get("/shipment/add", (req, res) => {
 //Insert it into DB
 app.post("/shipment/add", (req, res) => {
   //Creates shipmentItems Json
-
   //This object has the Object(id) and quantity of items selected for shipment
-  let shipmentItems = req.body.id //foreach req.body.ID
+  let shipmentItemsPartial = req.body.id //foreach req.body.ID
     .map((id, index) => {
       let objId = new ObjectId(id);
-      //insert into shipmentItems {_id: req.body.id, quantity: req.body.quantity}
+      //insert into shipmentItemsPartial {_id: req.body.id, quantity: req.body.quantity}
       return {
         _id: objId,
         quantity: req.body.quantity[index],
       };
-    }) //removes from shipmentItems if quantity <= 0
+    }) //removes from shipmentItemsPartial if quantity <= 0
     .filter((object) => object.quantity > 0);
-    //creates Date to creationg_date field
-    let date = new Date().toDateString()
+  //creates Date to creationg_date field
+  let date = new Date().toDateString();
+  //creates shipment to be inserted on database
   let shipment = {
-    "creation_date":date,
-    "items": shipmentItems
+    creation_date: date
+  };
+  console.log(shipmentItemsPartial);
+  //creates list ob objectId in our order to be used as filter
+  let objectsId = shipmentItemsPartial.map((shipmentItem) => {
+    return shipmentItem._id;
+  });
+  //gets items in the shipment order
+  //we should not "believe name and description info get from front req"
+  //this steps check if required id exists in our database and return cursor for their documents
+  const cursor = db.collection("Items").find({ _id: { $in: objectsId } });
+  //array for all items in shipment order with complete information
+  let shipmentItems = [];
+  //function to insert item description, item name and order quantity for each item in shipment
+  function iterateFunc(doc) {
+    //find correct shipmentItem quantity
+    let objItems = shipmentItemsPartial.map((item)=>{
+      //had problems comparing two objItems, so i converted them to string
+      return item._id.toString();
+    })
+    //find what quantity was requested for item identified by doc._id
+    let quantity = shipmentItemsPartial[objItems.indexOf(doc._id.toString())].quantity;
+    //Creates item for shipment
+    let item = {
+      _id: doc._id,
+      description: doc.description,
+      name: doc.name,
+      quantity: quantity,
+    }
+    //insert item into shipmentItems
+    shipmentItems.push({...item});
+    //insert shipmentItems array into shipment.items
+    shipment.items = shipmentItems;
+    console.log(shipment);
   }
-  console.log(shipmentItems);
-  db.collection("Shipments").insertOne(shipment,(err,result) =>{
+  //retrieves data for each Item found in database which is part of the order
+  cursor.forEach(iterateFunc);
+
+  //insert new shipment into database
+  db.collection("Shipments").insertOne(shipment,(err,result) => {
     if(err) throw err;
     res.redirect("/shipment/list");
   })
-  
-});
-//Create Shipment JSON
 
-/* 
-console.log(req.body.id, req.body.quantity);
-  let shipment = req.body.id.map((id, index) => {
-    if (req.body.quantity[index]>=0 && req.body.quantity[index]!='') {
-      return { quantity: req.body.quantity[index], id: id };
-    }
-  });
-  for (let k = 0; k < req.body.id.length; k++) {
-    if (req.body.quantity[k] <= 0) {
-      req.body.quantity.splice(k, 1);
-      req.body.id.splice(k, 1);
-    }
-  }*/
+});
